@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Happy Teacher's Day — BCA Dept (Next‑Level) </title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js" defer></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="description" content="A joyful, animated and responsive tribute to our teachers from BCA 3rd Semester." />
+  <meta property="og:title" content="Happy Teacher's Day — BCA Dept" />
+  <meta property="og:description" content="A joyful, animated and responsive tribute to our teachers from BCA 3rd Semester." />
+  <meta property="og:type" content="website" />
+
+  <style>
+    :root{
+      --bg1:#0f172a;          /* slate-900 */
+      --fg:#e5e7eb;           /* slate-200 */
+      --glass: rgba(255,255,255,0.08);
+      --glass-border: rgba(255,255,255,0.12);
+      --card-blur: 14px;
+      --brand1:#2563eb;       /* blue-600 */
+      --brand2:#7c3aed;       /* violet-600 */
+      --brand3:#f59e0b;       /* amber-500 */
+    }
+
+    /* Animation delay utility class */
+    .animation-delay-1200 {
+      animation-delay: 1.2s;
+    }
+    html, body { scroll-behavior: smooth; }
+    body { font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; background: var(--bg1); color: var(--fg); }
+
+    /* ---------- Global polish ---------- */
+    .container-safe{ max-width: 88rem; margin-inline:auto; padding-inline: 1rem; }
+    .btn{
+      display:inline-flex; align-items:center; gap:.5rem; padding:.8rem 1.1rem; border-radius:1rem;
+      font-weight:600; border:1px solid rgba(255,255,255,.14); box-shadow: 0 10px 30px rgba(2,6,23,.45);
+      background: linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      transition: transform .22s ease, box-shadow .25s ease, opacity .2s ease; will-change: transform;
+    }
+    .btn:active{ transform: translateY(1px) scale(.99); }
+    .btn-primary{ color:#fff; border-color: transparent; background: linear-gradient(135deg,var(--brand1),var(--brand2)); }
+    .btn-ghost{ background: transparent; color: #fff; border:1px solid rgba(255,255,255,.2); }
+
+    .glass-card{ background: var(--glass); border:1px solid var(--glass-border); -webkit-backdrop-filter: blur(var(--card-blur)); backdrop-filter: blur(var(--card-blur)); border-radius: 16px; }
+
+    /* ---------- Animated site background (GPU-friendly) ---------- */
+    .bg-animated{
+      position: fixed; inset:0; z-index:-20; overflow:hidden;
+      background: radial-gradient(1200px 900px at 10% 10%, rgba(124,58,237,.18), transparent 60%),
+                  radial-gradient(1200px 900px at 90% 90%, rgba(37,99,235,.16), transparent 60%),
+                  linear-gradient(270deg, #0b1224, #0f172a, #0b1325);
+      background-size: 200% 200%;
+      animation: gradientShift 26s ease infinite;
+    }
+    @keyframes gradientShift { 0%{background-position: 0% 50%} 50%{background-position: 100% 50%} 100%{background-position: 0% 50%} }
+
+    /* ---------- Cursor spotlight ---------- */
+    .spotlight{ position: fixed; inset: -20vh -20vw; pointer-events:none; z-index:-10; background: radial-gradient(40vmax 40vmax at var(--mx,50%) var(--my,50%), rgba(59,130,246,.12), transparent 60%); }
+
+    /* ---------- Top progress bar ---------- */
+    #scrollProgress{ position: fixed; left:0; top:0; height:4px; width:0%; background: linear-gradient(90deg, var(--brand1), var(--brand2)); z-index:60; box-shadow:0 0 12px rgba(124,58,237,.6); }
+
+    /* ---------- Type scale (clamp) ---------- */
+    .h1{ font-weight:800; line-height:1.1; font-size: clamp(2rem, 3vw + 1rem, 4rem); padding-top: 2rem;}
+    .h2{ font-weight:800; line-height:1.15; font-size: clamp(1.5rem, 2.2vw + .6rem, 2.6rem); }
+    .lead{ font-size: clamp(1rem, 1.1vw + .6rem, 1.25rem); opacity:.92; text-align: center; }
+
+    /* ---------- Gradient text ---------- */
+    .gradient-text{ background: linear-gradient(90deg, var(--brand1), var(--brand2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color: transparent; }
+
+      /* ---------- Envelope ---------- */
+.envelope-wrapper {
+  perspective: 1200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===== [FIX 2] Envelope shape made consistent ===== */
+.envelope {
+  /* Use clamp for width, but aspect-ratio for a consistent shape */
+  width: clamp(290px, 90vw, 560px); 
+  aspect-ratio: 1.5 / 1; /* This ensures the envelope shape is always the same */
+  position: relative;
+  border-radius: 24px;
+  background: linear-gradient(180deg, #fde68a, #f59e0b);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .35);
+  cursor: pointer;
+  overflow: hidden;
+  display: block;
+}
+
+/* Flap */
+.envelope .flap {
+  position: absolute;
+  inset: 0;
+  transform-origin: top;
+  clip-path: polygon(0% 0%, 100% 0%, 50% 60%);
+  background: linear-gradient(180deg, #fbbf24, #f59e0b);
+  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, .25));
+  transition: transform 1s ease-in-out;
+  z-index: 3;
+}
+
+/* Letter hidden inside */
+.envelope .letter {
+  position: absolute;
+  left: 50%;
+  bottom: -100%;
+  transform: translateX(-50%);
+  width: 86%;
+  height: 80%; /* Give letter a height relative to envelope */
+  overflow-y: auto; /* Allow scrolling if content overflows on small screens */
+  border-radius: 18px;
+  background: #fff;
+  color: #0f172a;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+  padding: 22px 26px;
+  line-height: 1.45;
+  transition: bottom 1s ease-in-out;
+  z-index: 2;
+}
+
+/* Added media query for letter on small screens */
+@media (max-width: 480px) {
+  .envelope .letter {
+    padding: 16px;
+    line-height: 1.4;
+  }
+  .envelope .letter h3 { font-size: 1.1rem; }
+  .envelope .letter p, .envelope .letter ul { font-size: 0.8rem; }
+}
+
+
+/* ✅ When checkbox is checked = open envelope */
+#open-envelope:checked + .envelope .flap {
+  transform: rotateX(-180deg);
+}
+
+#open-envelope:checked + .envelope .letter {
+  bottom: 8%; /* Adjusted for better fit with aspect-ratio */
+} 
+
+    /* ---------- Masonry (column-based) ---------- */
+    .masonry{ columns:1; column-gap: 8px; }
+    .masonry>figure{ break-inside: avoid; margin:0 0 8px 0; position:relative; overflow:hidden; border-radius:14px; }
+    .masonry img{ width:100%; display:block; transition: transform .6s ease, filter .6s ease; }
+    .masonry figure:hover img{ transform: scale(1.06); filter: saturate(1.1) contrast(1.02); }
+    @media(min-width:640px){ .masonry{ columns:2; } }   /* sm */
+    @media(min-width:768px){ .masonry{ columns:3; } }   /* md */
+    @media(min-width:1024px){ .masonry{ columns:4; } }  /* lg */
+    @media(min-width:1280px){ .masonry{ columns:5; } }  /* xl */
+
+
+      /* ---------- Teacher cards ---------- */
+    .teacher-card{ position:relative; border-radius:1.1rem; padding:1.1rem; background: rgba(17,24,39,.72); border:1px solid rgba(255,255,255,.06); box-shadow: 0 20px 50px rgba(2,6,23,.6); transition: transform .25s ease, box-shadow .25s ease; overflow:visible; }
+    .teacher-card:hover{ transform: translateY(-6px); box-shadow: 0 28px 70px rgba(2,6,23,.75); }
+    .teacher-card::after{ content:""; position:absolute; inset:0; border-radius:inherit; background: radial-gradient(60% 80% at var(--mx,50%) var(--my,50%), rgba(124,58,237,.18), transparent 70%); opacity:0; transition: opacity .25s ease; }
+    .teacher-card:hover::after{ opacity:1; }
+    .teacher-photo{ width:96px; height:96px; border-radius:14px; object-fit:cover; box-shadow: 0 6px 18px rgba(2,6,23,.45); }
+    @media (max-width:640px){ .teacher-photo{ width:72px; height:72px; } }
+
+    .teacher-popup{ position:absolute; left:50%; bottom: calc(100% + 12px); transform: translateX(-50%) scale(.95); min-width: 260px; max-width: 360px; padding: 14px; border-radius: 12px; z-index: 40; background: rgba(17,24,39,.96); color: #e5e7eb; border: 1px solid rgba(255,255,255,.06); box-shadow: 0 20px 60px rgba(0,0,0,.45); opacity: 0; pointer-events: none; transition: opacity .22s ease, transform .22s ease; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+    .teacher-card:hover .teacher-popup{ opacity:1; transform: translateX(-50%) scale(1); pointer-events:auto; }
+
+    /* ---------- Shine effect on hover ---------- */
+    .shine{ position:relative; overflow:hidden; }
+    .shine::before{ content:""; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background: linear-gradient(120deg, transparent, rgba(255,255,255,.28), transparent); transform: rotate(25deg) translateX(-30%); transition: transform .7s ease; }
+    .shine:hover::before{ transform: rotate(25deg) translateX(60%); }
+
+    /* ---------- Floating subtle animation for images ---------- */
+    @keyframes float { 0%{ transform: translateY(0) } 50%{ transform: translateY(-8px) } 100%{ transform: translateY(0) } }
+    .float{ animation: float 7s ease-in-out infinite; }
+
+    /* ---------- Sticky section headings ---------- */
+    .section-title{ position: sticky; text-align: center; top: 0; z-index: 20; padding-block: .8rem; background: linear-gradient(180deg, rgba(15,23,42,.92), rgba(15,23,42,.6), transparent); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+
+    /* ---------- Back to top ---------- */
+    #backToTop{ opacity:0; pointer-events:none; transition: opacity .3s ease; }
+    #backToTop.visible{ opacity:1; pointer-events:auto; }
+
+    /* ---------- Respect reduced motion ---------- */
+    @media (prefers-reduced-motion: reduce){
+      *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+    }
+
+.sticky-note {
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+  transform: rotate(calc(-3deg + 6deg * var(--rotation)));
+  transition: transform 0.3s, box-shadow 0.3s;
+  font-family: 'Patrick Hand', cursive; /* playful handwritten font */
+  font-size: 1.1rem;
+  position: relative;
+  background: var(--bg, #fff); /* fallback */
+}
+.sticky-note:hover {
+  transform: scale(1.07) rotate(0deg);
+  box-shadow: 0 15px 25px rgba(0,0,0,0.35);
+  z-index: 10;
+}
+.sticky-note::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 50px;
+  height: 15px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+/* ---------- Preloader Styles ---------- */
+#preloader { background: radial-gradient(ellipse at center, #0a223c 0%, #000000 70%); transition: opacity 1.5s ease-in-out, visibility 1.5s ease-in-out; }
+#preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+#preloader::after { content: ''; position: absolute; inset: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 2px, 3px 100%; pointer-events: none; animation: scanlines 5s linear infinite; }
+@keyframes scanlines { from { background-position: 0 0; } to { background-position: 0 100%; } }
+.hologram-container { perspective: 1200px; }
+#hologram { width: 250px; height: 250px; position: relative; transform-style: preserve-3d; animation: rotateHologram 30s linear infinite; }
+@keyframes rotateHologram { from { transform: rotateY(0deg) rotateX(10deg); } to { transform: rotateY(360deg) rotateX(10deg); } }
+#hologram .core { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; border-radius: 50%; background: #7DF9FF; transform: translate(-50%, -50%); box-shadow: 0 0 20px #7DF9FF, 0 0 40px #7DF9FF, 0 0 60px #00FFFF; }
+#hologram .ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(125, 249, 255, 0.4); box-shadow: 0 0 10px rgba(125, 249, 255, 0.5) inset; transform-style: preserve-3d; }
+#hologram .ring:nth-child(2) { transform: rotateX(75deg) rotateY(0deg); }
+#hologram .ring:nth-child(3) { transform: rotateX(75deg) rotateY(60deg); }
+#hologram .ring:nth-child(4) { transform: rotateX(75deg) rotateY(120deg); }
+#hologram .ring::before { content: ''; position: absolute; top: 50%; left: 10px; width: 12px; height: 12px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px #fff; transform: translateY(-50%); animation: orbit 6s linear infinite; }
+#hologram .ring:nth-child(3)::before { animation-delay: -2s; }
+#hologram .ring:nth-child(4)::before { animation-delay: -4s; }
+@keyframes orbit { from { transform: translateY(-50%) rotateZ(0deg) translateX(120px); } to { transform: translateY(-50%) rotateZ(360deg) translateX(120px); } }
+#terminal { text-shadow: 0 0 5px rgba(0, 255, 255, 0.7); }
+.terminal-line { white-space: pre-wrap; margin-bottom: 0.75rem; color: #7DF9FF; }
+.status-ok { color: #adff2f; font-weight: bold; }
+#cursor { animation: blink 1s steps(2) infinite; }
+@keyframes blink { to { background-color: transparent; } }
+
+  </style>
+</head>
+<body class="min-h-screen text-white overflow-x-hidden">
+  <div id="preloader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black overflow-hidden">
+    <div class="hologram-container">
+      <div id="hologram">
+        <div class="core"></div>
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="ring"></div>
+      </div>
+    </div>
+    <div id="terminal" class="absolute bottom-0 left-0 w-full p-4 sm:p-6 font-mono text-sm">
+      <div id="terminal-output"></div>
+      <div class="flex items-center mt-1">
+        <span class="text-cyan-400 mr-2">></span>
+        <span id="cursor" class="bg-cyan-400 w-2 h-4 inline-block" aria-hidden="true"></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="scrollProgress"></div>
+  <div class="bg-animated" aria-hidden="true"></div>
+  <div class="spotlight" aria-hidden="true"></div>
+
+  <audio id="bgAudio" src="assets/music/song.mp3" preload="auto" loop></audio>
+  <button id="musicToggle" aria-label="Toggle Music" class="fixed top-5 right-5 z-50 btn btn-ghost">
+    <span id="musicIcon">🔈</span><span class="hidden sm:inline"> Music</span>
+  </button>
+
+  <button id="backToTop" class="fixed bottom-6 right-6 z-40 btn btn-primary">Back to Top ↑</button>
+
+  <header id="hero" class="relative min-h-[100svh] flex flex-col items-center justify-center text-center px-6">
+    <h1 id="hero-title" style="color:#ec4899; font-weight:800; font-size: clamp(2.5rem, 6vw, 4rem);">
+      Happy Teacher's Day <span style="color:#38bdf8;">2025</span>
+    </h1>
+    <p id="hero-lead" class="mt-3 lead max-w-3xl">“Teachers are the Operating System of our Life 💻” Without you, we are just raw hardware. With your knowledge, discipline, and love, we run smoothly, upgrading every day.” — With love from the BCA 3rd Semester 💙</p>
+    <div id="hero-envelope" class="envelope-wrapper mt-10">
+      <input type="checkbox" id="open-envelope" hidden>
+      <label for="open-envelope" class="envelope">
+        <div class="letter">
+          <h3 class="text-xl font-bold text-slate-800">Dear Teachers,</h3>
+          <p class="mt-2 text-slate-700 text-sm">Thank you for your patience, guidance, and endless motivation. You make complex ideas simple and the classroom feel like home. We hope this little web-letter brings a smile today.</p>
+          <ul class="mt-4 text-slate-700 text-sm list-disc pl-5">
+            <li>Your words shape our future.</li>
+            <li>Your kindness builds our confidence.</li>
+            <li>Your passion inspires our curiosity.</li>
+          </ul>
+          <p class="mt-4 text-right text-slate-800 font-semibold">— BCA Batch, 3rd Sem</p>
+        </div>
+        <div class="flap"></div>
+      </label>
+    </div>
+    <div class="mt-10">
+      <a href="#collage" class="btn btn-primary">Go to Collage ↓</a>
+    </div>
+    <div class="pointer-events-none absolute inset-0 -z-[1]">
+      <div class="float absolute -top-12 -left-10 w-44 h-44 rounded-full bg-violet-600/20 blur-2xl"></div>
+      <div class="float absolute bottom-10 right-12 w-56 h-56 rounded-full bg-blue-600/20 blur-2xl" style="animation-delay:1.2s"></div>
+    </div>
+  </header>
+
+  <section id="collage" class="relative py-16">
+    <div class="container-safe">
+      <div class="section-title"><h2 class="h2">Our Beloved Faculties</h2></div>
+      <p class="mt-2 lead">A collage of mentors</p>
+      <div class="masonry mt-6">
+        <figure class="shine"><img src="assets/Faculty/suparna-dhar.jpg" alt="Faculty 1" loading="lazy"></figure>
+        <figure class="shine"><img src="assets/Faculty/majid-mallik.jpg" alt="Faculty 2" loading="lazy"></figure>
+        <figure class="shine"><img src="assets/Faculty/malabika-ghosh.jpg" alt="Faculty 3" loading="lazy"></figure>
+        <figure class="shine"><img src="assets/Faculty/nisha-banerjee.webp" alt="Faculty 4" loading="lazy"></figure>
+        <figure class="shine"><img src="assets/Faculty/soujanya-maam.jpg" alt="Faculty 5" loading="lazy"></figure>
+        <figure class="shine"><img src="assets/Faculty/krishnendu-sir.jpg" alt="Faculty 6" loading="lazy"></figure>
+        <figure class="shine"><img src="assets/Faculty/lopamudra-maam.jpeg" alt="Faculty 7" loading="lazy"></figure>
+        <figure class="shine"><img src="assets/Faculty/partha-sir.jpg" alt="Faculty 8" loading="lazy"></figure>
+        <figure class="shine"><img src="assets/Faculty/protima-ma'am.jpg" alt="Faculty 9" loading="lazy"></figure>
+        <figure class="shine"><img src="assets/Faculty/saibal-sir.jpg" alt="Faculty 10" loading="lazy"></figure>
+        <figure class="shine"><img src="assets/Faculty/sayantani-maam.jpg" alt="Faculty 10" loading="lazy"></figure>
+        <figure class="shine"><img src="assets/Faculty/sayantani-mondal.jpg" alt="Faculty 10" loading="lazy"></figure>
+        <figure class="shine"><img src="assets/Faculty/subhojyoti-sir.jpg" alt="Faculty 10" loading="lazy"></figure>
+        <figure class="shine"><img src="assets/Faculty/sudip-kundu.jpg" alt="Faculty 10" loading="lazy"></figure>
+        <figure class="shine"><img src="assets/Faculty/varsha-chakraborty.jpg" alt="Faculty 10" loading="lazy"></figure>
+      </div>
+      <div class="mt-10 text-center">
+        <a href="#teachers" class="btn btn-primary">Meet Our Current 3rd Sem Teachers →</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="teachers" class="relative py-16">
+    <div class="container-safe">
+      <div class="section-title"><h2 class="h2">Our 3rd Semester mentors</h2></div>
+      <p class="mt-2 lead">Knowledge • Discipline • Upgrade</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-4">
+        <article class="teacher-card shine cursor-pointer" data-name="Dr. Suparna Dhar" data-role="Principal – NSHM Institute of Computing & Analytics" data-photo="assets/third_sem_faculty/suparna-dhar.jpg" data-quote="In data, we find patterns; in analytics, we find meaning; in insights, we find power." data-interests="Leadership, research, empowering students">
+          <div class="flex items-center gap-4">
+            <img class="teacher-photo" src="assets/third_sem_faculty/suparna-dhar.jpg" alt="Dr. Suparna Dhar" />
+            <div>
+              <h3 class="text-lg font-bold">Dr. Suparna Dhar</h3>
+              <p class="text-slate-300 text-sm">Principal – NSHM Institute of Computing & Analytics</p>
+            </div>
+          </div>
+        </article>
+        <article class="teacher-card shine cursor-pointer" data-name="Prof. Majid Mallik" data-role="Program Coordinator – NSHM Institute of Computing & Analytics" data-photo="assets/third_sem_faculty/majid-mallik.jpg" data-quote="C is the mother of all languages, laying the foundation for every programmer’s journey." data-interests="Discipline, Precision, Efficiency">
+          <div class="flex items-center gap-4">
+            <img class="teacher-photo" src="assets/third_sem_faculty/majid-mallik.jpg" alt="Prof. Majid Mallik" />
+            <div>
+              <h3 class="text-lg font-bold">Prof. Majid Mallik</h3>
+              <p class="text-slate-300 text-sm">Program Coordinator</p>
+            </div>
+          </div>
+        </article>
+        <article class="teacher-card shine cursor-pointer" data-name="Prof. Malabika Ghosh" data-role="Batch Coordinator – NSHM Institute of Computing & Analytics" data-photo="assets/third_sem_faculty/malabika-ghosh.jpg" data-quote="Python is the language where simplicity meets power—turning ideas into reality with just a few lines." data-interests="Simplicity, Strength, Efficiency">
+          <div class="flex items-center gap-4">
+            <img class="teacher-photo" src="assets/third_sem_faculty/malabika-ghosh.jpg" alt="Prof. Malabika Ghosh" />
+            <div>
+              <h3 class="text-lg font-bold">Prof. Malabika Ghosh</h3>
+              <p class="text-slate-300 text-sm">Batch Coordinator</p>
+            </div>
+          </div>
+        </article>
+        <article class="teacher-card shine cursor-pointer" data-name="Prof. Nisha Banerjee" data-role="Assistant Professor" data-photo="assets/third_sem_faculty/nisha-banerjee.webp" data-quote="Logic from data structures, creativity from web design, and foundation from digital electronics together build the future of technology." data-interests="Logic, Creativity, Engineering">
+          <div class="flex items-center gap-4">
+            <img class="teacher-photo" src="assets/third_sem_faculty/nisha-banerjee.webp" alt="Prof. Nisha Banerjee" />
+            <div>
+              <h3 class="text-lg font-bold">Prof. Nisha Banerjee</h3>
+              <p class="text-slate-300 text-sm">Assistant Professor</p>
+            </div>
+          </div>
+        </article>
+        <article class="teacher-card shine cursor-pointer" data-name="Prof. Sayantani Sengupta" data-role="Assistant Professor" data-photo="assets/third_sem_faculty/sayantani-maam.jpg" data-quote="Language is the soul of culture, and literature is the voice of generations." data-interests="Diversity, Struggles, Aspirations">
+          <div class="flex items-center gap-4">
+            <img class="teacher-photo" src="assets/third_sem_faculty/sayantani-maam.jpg" alt="Prof. Sayantani Sengupta" />
+            <div>
+              <h3 class="text-lg font-bold">Prof. Sayantani Sengupta</h3>
+              <p class="text-slate-300 text-sm">Assistant Professor</p>
+            </div>
+          </div>
+        </article>
+        <article class="teacher-card shine cursor-pointer" data-name="Prof. Sudip Kundu" data-role="Assistant Professor" data-photo="assets/third_sem_faculty/sudip-kundu.jpg" data-quote="Marketing is not about selling, it’s about creating value, trust, and lasting connections." data-interests="Creativity, Strategy, Brands">
+          <div class="flex items-center gap-4">
+            <img class="teacher-photo" src="assets/third_sem_faculty/sudip-kundu.jpg" alt="Prof. Sudip Kundu" />
+            <div>
+              <h3 class="text-lg font-bold">Prof. Sudip Kundu</h3>
+              <p class="text-slate-300 text-sm">Assistant Professor</p>
+            </div>
+          </div>
+        </article>
+        <article class="teacher-card shine cursor-pointer" data-name="Prof. Varsha Chakraborty" data-role="Assistant Professor" data-photo="assets/third_sem_faculty/varsha-chakraborty.jpg" data-quote="The Internet of Things connects not just devices, but also people, possibilities, and the future." data-interests="IoT, Efficiency, Connectivity">
+          <div class="flex items-center gap-4">
+            <img class="teacher-photo" src="assets/third_sem_faculty/varsha-chakraborty.jpg" alt="Prof. Varsha Chakraborty" />
+            <div>
+              <h3 class="text-lg font-bold">Prof. Varsha Chakraborty</h3>
+              <p class="text-slate-300 text-sm">Assistant Professor</p>
+            </div>
+          </div>
+        </article>
+        <article class="teacher-card shine cursor-pointer" data-name="Prof. Protima Sikari" data-role="Assistant Professor" data-photo="assets/third_sem_faculty/protima-ma'am.jpg" data-quote="The Constitution is not just a book of laws—it is the heartbeat of democracy." data-interests="Justice, Equality, Freedom">
+          <div class="flex items-center gap-4">
+            <img class="teacher-photo" src="assets/third_sem_faculty/protima-ma'am.jpg" alt="Prof. Protima Sikari" />
+            <div>
+              <h3 class="text-lg font-bold">Prof. Protima Sikari</h3>
+              <p class="text-slate-300 text-sm">Assistant Professor</p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div id="teacherModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 px-4">
+    <div id="modalCard" class="rounded-2xl shadow-2xl max-w-3xl w-full overflow-hidden animate-fadeIn relative flex flex-col md:flex-row">
+      <button id="closeModal" class="absolute top-4 right-4 text-gray-200 hover:text-red-400 text-3xl font-bold">&times;</button>
+      <div class="md:w-1/2 w-full flex-shrink-0 bg-gray-200 flex items-center justify-center">
+        <img id="modalPhoto" src="assets/image/default-teacher.jpg" alt="Teacher" class="w-full h-full object-cover md:rounded-l-2xl md:rounded-r-none rounded-t-2xl hidden">
+        <span id="photoPlaceholder" class="text-gray-500 text-sm">No photo available</span>
+      </div>
+      <div class="md:w-1/2 w-full p-8 flex flex-col justify-center text-left bg-white">
+        <h3 id="modalName" class="inline-block bg-indigo-600 text-white px-5 py-2 rounded-full text-lg font-semibold shadow-md mb-4"></h3>
+        <p id="modalSubject" class="text-indigo-600 font-medium mb-4 text-sm uppercase tracking-wide"></p>
+        <blockquote id="modalLine" class="relative italic text-gray-800 mb-6 text-xl font-medium leading-relaxed text-center before:content-['“'] after:content-['”'] before:text-3xl after:text-3xl before:mr-1 after:ml-1 before:align-top after:align-top"></blockquote>
+        <p id="modalInterests" class="text-gray-600 leading-relaxed text-base"></p>
+      </div>
+    </div>
+  </div>
+
+  <section id="gratitude-wall" class="relative py-16">
+    <div class="container-safe">
+      <div class="section-title"><h2 class="h2">Student Gratitude Wall</h2></div>
+      <p class="mt-2 lead">Learn • Lead • Succeed</p>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mt-10">
+        <div class="sticky-note bg-yellow-200 text-gray-900" style="--rotation: 1;"><p>Majid Mallik Sir, thank you for not only teaching us lessons from books but also lessons for life. You inspire us every day.</p></div>
+        <div class="sticky-note bg-pink-200 text-gray-900" style="--rotation: -1;"><p>"Teachers plant seeds of knowledge that grow forever. Thank you, Nisha Banerjee Ma’am, for nurturing us with love and care."</p></div>
+        <div class="sticky-note bg-green-200 text-gray-900" style="--rotation: 2;"><p>“Behind every confident student is a teacher who believed in them. Today, we honor and thank you for that belief.”</p></div>
+        <div class="sticky-note bg-blue-200 text-gray-900" style="--rotation: -2;"><p>“Thank you to all teachers, for turning knowledge into wisdom and lessons into life.” </p></div>
+        <div class="sticky-note bg-purple-200 text-gray-900" style="--rotation: 1.5;"><p>Knowledge shared, wisdom gained</p></div>
+        <div class="sticky-note bg-orange-200 text-gray-900" style="--rotation: -1.5;"><p>Forever your grateful student</p></div>
+        <div class="sticky-note bg-red-200 text-gray-900" style="--rotation: 0.5;"><p>Inspired by your teaching</p></div>
+        <div class="sticky-note bg-teal-200 text-gray-900" style="--rotation: -0.5;"><p>Thank you, dear professor</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="memories" class="relative py-16">
+    <div class="container-safe">
+      <div class="section-title"><h2 class="h2">Classroom Memories</h2></div>
+      <p class="mt-2 lead">A gallery of moments with our teachers — photos and clips.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        <figure class="relative overflow-hidden rounded-2xl glass-card group shine">
+          <img class="w-full object-cover aspect-[4/3] transition-transform duration-500 group-hover:scale-105" src="assets/Classroom Memories/memories8.jpg" alt="Lab session" />
+        </figure>
+        <figure class="relative overflow-hidden rounded-2xl glass-card group shine">
+          <img class="w-full object-cover aspect-[4/3] transition-transform duration-500 group-hover:scale-105" src="assets/Classroom Memories/memories19.jpg" alt="Lab session" />
+        </figure>
+        <figure class="relative overflow-hidden rounded-2xl glass-card group shine">
+          <img class="w-full object-cover aspect-[4/3] transition-transform duration-500 group-hover:scale-105" src="assets/Classroom Memories/memories1.jpg" alt="Class selfie" />
+        </figure>
+        <figure class="relative overflow-hidden rounded-2xl glass-card group shine">
+          <img class="w-full object-cover aspect-[4/3] transition-transform duration-500 group-hover:scale-105" src="assets/Classroom Memories/memories2.jpg" alt="Class selfie" />
+        </figure>
+        <figure class="relative overflow-hidden rounded-2xl glass-card group shine">
+          <img class="w-full object-cover aspect-[4/3] transition-transform duration-500 group-hover:scale-105" src="assets/Classroom Memories/memories10.jpg" alt="Class selfie" />
+        </figure>
+        <figure class="relative overflow-hidden rounded-2xl glass-card group shine">
+          <img class="w-full object-cover aspect-[4/3] transition-transform duration-500 group-hover:scale-105" src="assets/Classroom Memories/memories20.jpg" alt="Class selfie" />
+        </figure>
+        <figure class="relative overflow-hidden rounded-2xl glass-card group shine">
+          <img class="w-full object-cover aspect-[4/3] transition-transform duration-500 group-hover:scale-105" src="assets/Classroom Memories/memories16.jpg" alt="Class selfie" />
+        </figure>
+        <figure class="relative overflow-hidden rounded-2xl glass-card group shine">
+          <img class="w-full object-cover aspect-[4/3] transition-transform duration-500 group-hover:scale-105" src="assets/Classroom Memories/memories23.jpg" alt="Class selfie" />
+        </figure>
+        <figure class="relative overflow-hidden rounded-2xl glass-card group shine">
+          <img class="w-full object-cover aspect-[4/3] transition-transform duration-500 group-hover:scale-105" src="assets/Classroom Memories/memories22.jpg" alt="Class selfie" />
+        </figure>
+        <figure class="relative overflow-hidden rounded-2xl glass-card group shine">
+          <img class="w-full object-cover aspect-[4/3] transition-transform duration-500 group-hover:scale-105" src="assets/Classroom Memories/memories11.jpg" alt="Class selfie" />
+        </figure>
+        <figure class="relative overflow-hidden rounded-2xl glass-card group shine">
+          <img class="w-full object-cover aspect-[4/3] transition-transform duration-500 group-hover:scale-105" src="assets/Classroom Memories/memories9.jpg" alt="Class selfie" />
+        </figure>
+        <figure class="relative overflow-hidden rounded-2xl glass-card group shine">
+            <img class="w-full object-cover aspect-[4/3] transition-transform duration-500 group-hover:scale-105" src="assets/Classroom Memories/memories4.jpg" alt="Class selfie" />
+        </figure>
+      </div>
+      <div class="mt-10 text-center">
+        <a href="#gratitude" class="btn btn-primary">Final Thank You →</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="gratitude" class="relative py-20 bg-gradient-to-br from-purple-100 via-pink-100 to-indigo-200 overflow-hidden">
+    <div class="container-safe text-center relative z-10 px-4 sm:px-6 lg:px-8">
+      <h1 class="text-3xl sm:text-5xl md:text-6xl font-extrabold text-slate-800 tracking-tight leading-tight drop-shadow-lg">
+        <span aria-hidden="true">💐</span> Thank You, Teachers! <span aria-hidden="true">💐</span>
+      </h1>
+      <p class="mt-4 text-lg md:text-2xl text-slate-600 font-medium max-w-4xl mx-auto drop-shadow-md">
+        You are the architects of our future, building foundations with endless patience and filling our lives with profound meaning. Today, we stand to celebrate YOU.
+      </p>
+      <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <blockquote class="glass-card p-6 rounded-3xl backdrop-filter backdrop-blur-lg bg-white/30 border border-white/40 shadow-xl transform transition-transform duration-500 hover:scale-105">
+          <p class="text-lg md:text-xl italic text-slate-700 font-serif">“A good teacher can inspire hope, ignite the imagination, and instill a love of learning.”</p>
+        </blockquote>
+        <blockquote class="glass-card p-6 rounded-3xl backdrop-filter backdrop-blur-lg bg-white/30 border border-white/40 shadow-xl transform transition-transform duration-500 hover:scale-105">
+          <p class="text-lg md:text-xl italic text-slate-700 font-serif">“Teachers affect eternity; no one can tell where their influence stops.”</p>
+        </blockquote>
+        <blockquote class="glass-card p-6 rounded-3xl backdrop-filter backdrop-blur-lg bg-white/30 border border-white/40 shadow-xl transform transition-transform duration-500 hover:scale-105">
+          <p class="text-lg md:text-xl italic text-slate-700 font-serif">“Thank you for making us better than we believed we could be.”</p>
+        </blockquote>
+      </div>
+      <div class="mt-16 flex items-center justify-center">
+        <button id="celebrateBtn" class="btn btn-primary px-8 py-4 text-lg md:text-xl font-bold rounded-full bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-colors duration-300 transform hover:scale-110 active:scale-95">
+          Celebrate 🎆
+        </button>
+      </div>
+    </div>
+    <canvas id="fxCanvas" class="pointer-events-none absolute inset-0 -z-0 opacity-70"></canvas>
+  </section>
+
+  <footer class="py-10 text-center text-base text-slate-500/90 font-light">
+    Crafted with ❤️ by the BCA 3rd Semester • Teacher's Day 2025
+  </footer>
+  
+  <script>
+  // Preloader Logic
+  (function() {
+    const preloader = document.getElementById('preloader');
+    const terminalOutput = document.getElementById('terminal-output');
+    const cursor = document.getElementById('cursor');
+    if (!preloader || !terminalOutput || !cursor) return;
+    function startHeroAnimation() {
+      if (typeof gsap === 'undefined') return;
+      gsap.set(['#hero-title', '#hero-lead', '#hero-envelope'], { opacity: 0, y: 30 });
+      gsap.set('#hero-envelope', { scale: 0.95 });
+      const heroTl = gsap.timeline({ defaults: { duration: 1, ease: 'power3.out' }, delay: 0.3 });
+      heroTl.to('#hero-title', { opacity: 1, y: 0 }).to('#hero-lead', { opacity: 1, y: 0 }, "-=0.8").to('#hero-envelope', { opacity: 1, y: 0, scale: 1 }, "-=0.8");
+    }
+    const lines = [ { text: 'SYSTEM.BOOT()', delayAfter: 800 }, { text: 'RENDER_HOLOGRAM: CORE...', status: '[OK]', delayAfter: 600 }, { text: 'RENDER_HOLOGRAM: ORBITALS...', status: '[OK]', delayAfter: 600 }, { text: 'INITIATING TRIBUTE_PROTOCOL.EXE...', delayAfter: 1200 }, { text: 'ACCESSING MEMORY_ARCHIVE...', status: '[OK]', delayAfter: 600 }, ];
+    let pageIsLoaded = false; let sequenceFinished = false;
+    function typeLine(line, callback) {
+      const lineDiv = document.createElement('div'); lineDiv.className = 'terminal-line'; terminalOutput.appendChild(lineDiv);
+      let charIndex = 0;
+      const typeCharInterval = setInterval(() => {
+        if (charIndex < line.text.length) { lineDiv.textContent += line.text.charAt(charIndex); charIndex++; }
+        else { clearInterval(typeCharInterval); if (line.status) { const statusSpan = document.createElement('span'); statusSpan.className = 'status-ok ml-3'; statusSpan.textContent = line.status; lineDiv.appendChild(statusSpan); } setTimeout(callback, line.delayAfter); }
+      }, 40);
+    }
+    function runSequence(index = 0) { if (index < lines.length) { typeLine(lines[index], () => runSequence(index + 1)); } else { sequenceFinished = true; if (pageIsLoaded) hidePreloader(); } }
+    function hidePreloader() {
+      setTimeout(() => {
+        const finalLine = document.createElement('div'); finalLine.className = 'terminal-line status-ok'; finalLine.textContent = 'SYSTEM READY. ENGAGING TRIBUTE...'; terminalOutput.appendChild(finalLine); cursor.style.display = 'none';
+        setTimeout(() => { preloader.classList.add('hidden'); startHeroAnimation(); }, 1500);
+      }, 500);
+    }
+    window.addEventListener('load', () => { pageIsLoaded = true; if (sequenceFinished) hidePreloader(); });
+    runSequence();
+  })();
+
+  // Smooth anchor scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => { a.addEventListener('click', e => { const id = a.getAttribute('href'); if (!id || id === '#') return; const target = document.querySelector(id); if (target){ e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }); });
+
+  // Music Toggle
+  const audio = document.getElementById('bgAudio'); const toggle = document.getElementById('musicToggle'); const icon = document.getElementById('musicIcon'); let userInteracted = false;
+  const tryAutoplay = async () => { try { await audio.play(); icon.textContent = '🔊'; } catch { icon.textContent = '🔈'; } };
+  document.addEventListener('click', () => { if (!userInteracted){ userInteracted = true; tryAutoplay(); } }, { once:true });
+  toggle.addEventListener('click', async () => { if (audio.paused){ await audio.play(); icon.textContent = '🔊'; } else { audio.pause(); icon.textContent = '🔈'; } });
+
+  // Back to Top
+  const backBtn = document.getElementById('backToTop'); backBtn.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+  const onScrollBtn = () => { if (window.scrollY > 600) backBtn.classList.add('visible'); else backBtn.classList.remove('visible'); };
+  document.addEventListener('scroll', onScrollBtn, { passive:true }); onScrollBtn();
+
+  // Scroll progress bar
+  const progress = document.getElementById('scrollProgress');
+  const onScrollProgress = () => { const h = document.documentElement; const scrolled = (h.scrollTop)/(h.scrollHeight - h.clientHeight) * 100; progress.style.width = scrolled + '%'; };
+  document.addEventListener('scroll', onScrollProgress, { passive:true }); onScrollProgress();
+
+  // Cursor spotlight
+  const spot = document.querySelector('.spotlight');
+  window.addEventListener('pointermove', (e)=>{
+    const x = (e.clientX / window.innerWidth) * 100; const y = (e.clientY / window.innerHeight) * 100;
+    spot.style.setProperty('--mx', x + '%'); spot.style.setProperty('--my', y + '%');
+    document.querySelectorAll('.teacher-card').forEach(card=>{ const rect = card.getBoundingClientRect(); const cx = ((e.clientX - rect.left) / rect.width) * 100; const cy = ((e.clientY - rect.top) / rect.height) * 100; card.style.setProperty('--mx', cx + '%'); card.style.setProperty('--my', cy + '%'); });
+  });
+
+  // GSAP animations
+  window.addEventListener('load', () => {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    gsap.registerPlugin(ScrollTrigger);
+    const env = document.querySelector('.envelope');
+    if (env) gsap.to(env, { y: -8, duration: 2.2, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+    gsap.utils.toArray('section').forEach((sec) => {
+      const targets = sec.querySelectorAll('h2,p,.btn,figure,article,blockquote');
+      gsap.from(targets, { y: 26, opacity: 0, duration: .9, stagger: 0.12, ease: 'power2.out', scrollTrigger: { trigger: sec, start: 'top 84%', toggleActions: 'play none none reverse' } });
+    });
+    gsap.utils.toArray('#hero .float').forEach((el, i)=>{ gsap.to(el, { yPercent: i % 2 ? -15 : -8, ease: 'none', scrollTrigger: { trigger:'#hero', scrub: true } }); });
+    
+    // Teacher Popup Modal
+    const teacherModal = document.getElementById("teacherModal"); const closeModal = document.getElementById("closeModal"); const modalPhoto = document.getElementById("modalPhoto"); const modalName = document.getElementById("modalName"); const modalSubject = document.getElementById("modalSubject"); const modalLine = document.getElementById("modalLine"); const modalInterests = document.getElementById("modalInterests"); const teacherCards = document.querySelectorAll(".teacher-card");
+    teacherCards.forEach(card => {
+      card.addEventListener("click", () => {
+        teacherModal.classList.remove("hidden"); teacherModal.classList.add("flex");
+        if (card.dataset.photo) { modalPhoto.src = card.dataset.photo; modalPhoto.classList.remove("hidden"); photoPlaceholder.classList.add("hidden"); } else { modalPhoto.classList.add("hidden"); photoPlaceholder.classList.remove("hidden"); }
+        modalName.textContent = card.dataset.name; modalSubject.textContent = card.dataset.role || ""; modalLine.textContent = card.dataset.quote || ""; modalInterests.textContent = card.dataset.interests || "";
+      });
+    });
+    closeModal.addEventListener("click", () => { teacherModal.classList.add("hidden"); teacherModal.classList.remove("flex"); });
+    teacherModal.addEventListener("click", (e) => { if (e.target === teacherModal) { closeModal.click(); } });
+
+    // Confetti on scroll
+    if (typeof confetti !== 'undefined') { ScrollTrigger.create({ trigger: '#gratitude', start: 'top 70%', once: true, onEnter: () => confetti({ particleCount: 160, spread: 80, origin: { y: .7 } }) }); }
+  });
+
+  // Celebrate button confetti
+  const celebrateBtn = document.getElementById('celebrateBtn');
+  celebrateBtn?.addEventListener('click', () => { if (typeof confetti !== 'undefined') confetti({ particleCount: 180, spread: 100, origin: { y: 0.7 } }); });
+  </script>
+
+  <style>
+    .animate-fadeIn { animation: fadeIn 0.4s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .sticky-note p { font-weight: 600; }
+  </style>
+</body>
+</html>
